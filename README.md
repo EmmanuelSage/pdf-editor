@@ -1,7 +1,11 @@
-# PDF Form Editor
+# PDF Toolkit
 
-A fully client-side PDF form filler. Open a PDF with AcroForm fields, type into them
-naturally, and download a filled copy. The file never leaves the browser.
+A fully client-side suite of small PDF tools. Everything runs in the browser — files
+never leave the device. Current tools:
+
+- **Edit document** — open a PDF with AcroForm fields, type into them, download a filled copy.
+- **Images to PDF** — combine images into a single PDF (one image per page), reorder, rotate,
+  choose page size (match image / A4 / Letter), export.
 
 > [!IMPORTANT]
 > **PDF.js font/cMap data is NOT committed — it's generated into `public/`.**
@@ -19,15 +23,29 @@ naturally, and download a filled copy. The file never leaves the browser.
 
 ## How it works
 
+**Edit document** (read + fill existing PDFs) uses [PDF.js](https://mozilla.github.io/pdf.js/):
+
 | Concern | Library | Notes |
 |---------|---------|-------|
-| Render pages | [PDF.js](https://mozilla.github.io/pdf.js/) | Each page drawn to a `<canvas>` |
+| Render pages | PDF.js | Each page drawn to a `<canvas>` |
 | Type into fields | PDF.js `AnnotationLayer` | Existing form fields become live HTML inputs, overlaid on the canvas |
 | Export | PDF.js `saveDocument()` | Merges typed values (`annotationStorage`) back into the PDF |
 
 The page canvas is rendered with `AnnotationMode.ENABLE_FORMS`, so it paints everything
 *except* form widgets — those are drawn as interactive HTML by the annotation layer, so
 there's no double-rendering.
+
+**Images to PDF** (create a new PDF) uses [pdf-lib](https://pdf-lib.js.org/). Each image
+becomes one page; you can rotate images 90° at a time and pick the page size (match the
+image, or fit onto A4/Letter with the page auto-oriented to the image). Notes:
+
+- JPEG/PNG are embedded directly. Other browser-decodable formats (webp, gif, …) are
+  rasterized to PNG via a canvas first.
+- **EXIF orientation** is honored: pdf-lib ignores the EXIF rotation flag, so a phone photo
+  would otherwise export sideways. We read the flag and, only when it's non-default, bake the
+  correct orientation into the pixels — so the PDF matches the thumbnail.
+- Rotation is applied with a centered `drawImage` (not page `/Rotate`), so it composes
+  cleanly with the fit-to-page math.
 
 ## Run
 
@@ -46,9 +64,12 @@ a fresh `git clone` until you've installed.
 The app is a small multi-tool suite. `react-router-dom` maps each tool to a URL; the
 home page is a launcher of tool cards.
 
-- `src/App.jsx` — routes: `/` → Home, `/edit` → EditPdf (unknown paths redirect to `/`)
+- `src/App.jsx` — routes: `/` → Home, `/edit` → EditPdf, `/images-to-pdf` → ImagesToPdf
+  (unknown paths redirect to `/`)
 - `src/pages/Home.jsx` — landing page; grid of tool cards (add a tool by adding an entry)
 - `src/pages/EditPdf.jsx` — the editor: open, zoom, fill fields, export/download
+- `src/pages/ImagesToPdf.jsx` — upload images, reorder (drag), export a combined PDF
+- `src/lib/imagesToPdf.js` — builds the PDF from image files (pdf-lib)
 - `src/lib/pdfjs.js` — configures the PDF.js worker, re-exports the bits we use, loads the
   form CSS, and owns the shared no-op `linkService`
 - `src/components/Dropzone.jsx` — upload / drag-and-drop
@@ -65,8 +86,10 @@ home page is a launcher of tool cards.
 
 ## Scope
 
-v1 fills **existing** form fields. PDFs without form fields (flat scans) will render but
-have nothing to type into — adding click-to-place free-text boxes is the natural next step.
+- **Edit document** fills **existing** form fields. PDFs without form fields (flat scans)
+  render but have nothing to type into — click-to-place free-text boxes is a natural next step.
+- **Images to PDF** does one image per page (rotation + match-image/A4/Letter page sizes).
+  Multi-up layouts (several images per page) would be a natural next step.
 
 ## Troubleshooting
 

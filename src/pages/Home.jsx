@@ -8,10 +8,10 @@ const TOOLS = [
     description: 'Open a PDF and fill in its form fields, then download the completed copy.',
   },
   {
+    to: '/images-to-pdf',
     icon: '🖼️',
     title: 'Images to PDF',
-    description: 'Combine images into a single PDF and export it.',
-    soon: true,
+    description: 'Combine images into a single PDF — one image per page — and export it.',
   },
 ];
 

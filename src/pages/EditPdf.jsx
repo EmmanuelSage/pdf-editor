@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDocument } from '../lib/pdfjs';
+import { downloadBytes } from '../lib/download';
 import Dropzone from '../components/Dropzone';
 import PdfDocumentView from '../components/PdfDocumentView';
 
@@ -49,14 +50,7 @@ export default function EditPdf() {
     try {
       // saveDocument() merges annotationStorage (the typed field values) back into the PDF.
       const bytes = await pdf.saveDocument();
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${fileName.replace(/\.pdf$/i, '')} - filled.pdf`;
-      a.click();
-      // Revoke after the click is processed; doing it synchronously can cancel the download.
-      setTimeout(() => URL.revokeObjectURL(url), 0);
+      downloadBytes(bytes, `${fileName.replace(/\.pdf$/i, '')} - filled.pdf`);
     } catch (err) {
       setError(`Export failed: ${err.message}`);
     } finally {
