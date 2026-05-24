@@ -43,14 +43,25 @@ a fresh `git clone` until you've installed.
 
 ## Layout
 
-- `src/lib/pdfjs.js` — configures the PDF.js worker, re-exports the bits we use, loads the form CSS
+The app is a small multi-tool suite. `react-router-dom` maps each tool to a URL; the
+home page is a launcher of tool cards.
+
+- `src/App.jsx` — routes: `/` → Home, `/edit` → EditPdf (unknown paths redirect to `/`)
+- `src/pages/Home.jsx` — landing page; grid of tool cards (add a tool by adding an entry)
+- `src/pages/EditPdf.jsx` — the editor: open, zoom, fill fields, export/download
+- `src/lib/pdfjs.js` — configures the PDF.js worker, re-exports the bits we use, loads the
+  form CSS, and owns the shared no-op `linkService`
 - `src/components/Dropzone.jsx` — upload / drag-and-drop
 - `src/components/PdfPageView.jsx` — renders one page: canvas + interactive annotation layer
 - `src/components/PdfDocumentView.jsx` — stacks all pages
-- `src/App.jsx` — open, zoom, export/download
 - `scripts/copy-pdfjs-assets.mjs` — copies PDF.js font/cMap data from `node_modules`
   into `public/` (runs automatically on `postinstall`, `predev`, `prebuild`). These are
   verbatim dependency files, so they're **gitignored**, not committed
+
+> [!NOTE]
+> Client-side routing: the dev server and `vite preview` serve `index.html` for any path,
+> so deep links like `/edit` work. A static host needs an SPA fallback (rewrite all routes
+> to `index.html`) for refresh-on-`/edit` to work.
 
 ## Scope
 
