@@ -1,0 +1,191 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ---- Toolbar ---- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  z-index: 10;
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.toolbar .file {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.toolbar .pages {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.zoom-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zoom-val {
+  width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.toolbar button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.toolbar button:hover {
+  background: #f7f8fa;
+}
+
+.toolbar button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.toolbar button.primary:hover {
+  background: var(--accent-hover);
+}
+
+.toolbar button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.error-bar {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-bottom: 1px solid #fecaca;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* ---- Stage ---- */
+.stage {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.doc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0 48px;
+}
+
+/* ---- Page ---- */
+.page-wrap {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+}
+
+.page-canvas {
+  display: block;
+  border-radius: 2px;
+}
+
+/* PDF.js fills .annotationLayer; nudge the form fields so they read as editable. */
+.annotationLayer .textWidgetAnnotation input,
+.annotationLayer .textWidgetAnnotation textarea,
+.annotationLayer .choiceWidgetAnnotation select {
+  background-color: rgba(37, 99, 235, 0.06);
+  outline: 1px solid rgba(37, 99, 235, 0.25);
+  transition: background-color 0.1s, outline-color 0.1s;
+}
+
+.annotationLayer .textWidgetAnnotation input:focus,
+.annotationLayer .textWidgetAnnotation textarea:focus,
+.annotationLayer .choiceWidgetAnnotation select:focus {
+  background-color: rgba(37, 99, 235, 0.12);
+  outline: 2px solid var(--accent);
+}
+
+/* ---- Dropzone ---- */
+.dropzone {
+  align-self: center;
+  margin: auto;
+  width: min(560px, 88vw);
+  padding: 56px 32px;
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dropzone.over {
+  border-color: var(--accent);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.dropzone-icon {
+  font-size: 44px;
+}
+
+.dropzone-title {
+  margin: 14px 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dropzone-hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.dropzone-privacy {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---- Busy overlay ---- */
+.busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(243, 244, 246, 0.6);
+  font-weight: 600;
+  color: var(--muted);
+}
