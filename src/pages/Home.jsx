@@ -5,7 +5,7 @@ const TOOLS = [
     to: '/edit',
     icon: '✏️',
     title: 'Edit document',
-    description: 'Open a PDF and fill in its form fields, then download the completed copy.',
+    description: 'Open a PDF, fill its form fields or add your own text anywhere, then download the edited copy.',
   },
   {
     to: '/images-to-pdf',

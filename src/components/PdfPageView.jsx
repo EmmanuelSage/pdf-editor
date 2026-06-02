@@ -1,12 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { AnnotationLayer, AnnotationMode, linkService } from '../lib/pdfjs';
+import TextLayer from './TextLayer';
 
-// Renders one PDF page: a canvas for the visual, plus PDF.js's interactive
-// AnnotationLayer on top so existing AcroForm fields become typeable HTML inputs.
-export default function PdfPageView({ pdf, pageNumber, scale }) {
+// Renders one PDF page: a canvas for the visual, PDF.js's interactive
+// AnnotationLayer on top so existing AcroForm fields become typeable HTML inputs,
+// and a TextLayer above that for free-text overlay boxes.
+// Memoized so a sibling page editing its boxes (or toolbar state changing) doesn't
+// re-render — and re-run the expensive canvas render of — every other page.
+function PdfPageView({ pdf, pageNumber, scale, textProps }) {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const annoRef = useRef(null);
+  // Set once the page has rendered, so the TextLayer only mounts with real
+  // dimensions; also gates the layer until the page geometry is known.
+  const [ready, setReady] = useState(false);
   // Survives StrictMode's double-mount and zoom re-renders so we never run two
   // renders on the same canvas at once (PDF.js deadlocks if you do).
   const renderTaskRef = useRef(null);
@@ -86,6 +93,7 @@ export default function PdfPageView({ pdf, pageNumber, scale }) {
         annotationStorage: pdf.annotationStorage,
       });
       await layer.render({ annotations, renderForms: true });
+      setReady(true);
     };
 
     run().catch((err) => console.error(`Page ${pageNumber} render failed:`, err));
@@ -100,6 +108,16 @@ export default function PdfPageView({ pdf, pageNumber, scale }) {
     <div className="page-wrap" ref={wrapRef}>
       <canvas ref={canvasRef} className="page-canvas" />
       <div ref={annoRef} className="annotationLayer" />
+      {ready && textProps && (
+        <TextLayer
+          {...textProps}
+          boxes={textProps.boxes.filter((b) => b.page === pageNumber)}
+          scale={scale}
+          onAdd={(x, y) => textProps.onAdd(pageNumber, x, y)}
+        />
+      )}
     </div>
   );
 }
+
+export default memo(PdfPageView);

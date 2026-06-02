@@ -59,6 +59,38 @@
   flex: 1;
 }
 
+.tool-group {
+  display: flex;
+  gap: 0;
+}
+
+.tool-group button {
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.tool-group button:first-child {
+  border-radius: 8px 0 0 8px;
+  margin-left: 0;
+}
+
+.tool-group button:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.tool-group button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.tool-group button.active:hover {
+  background: var(--accent-hover);
+}
+
 .zoom-group {
   display: flex;
   align-items: center;
@@ -184,6 +216,86 @@
 .annotationLayer .choiceWidgetAnnotation select:focus {
   background-color: rgba(37, 99, 235, 0.12);
   outline: 2px solid var(--accent);
+}
+
+/* ---- Free-text overlay ---- */
+/* Click-through by default so AcroForm fields underneath stay usable; only the
+   boxes are interactive. In "Add text" mode the layer catches clicks to place a box. */
+.text-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.text-layer.adding {
+  pointer-events: auto;
+  cursor: text;
+}
+
+.text-box {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.text-box-edit {
+  margin: 0;
+  padding: 0 1px;
+  /* line-height is set inline from LINE_HEIGHT in lib/overlay.js so export matches preview. */
+  font-family: Helvetica, Arial, sans-serif;
+  color: #000;
+  white-space: pre;
+  min-width: 8px;
+  outline: 1px dashed rgba(37, 99, 235, 0.5);
+  cursor: text;
+}
+
+.text-box.selected .text-box-edit {
+  outline: 1.5px solid var(--accent);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.text-box-bar {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  white-space: nowrap;
+}
+
+.text-box-bar button {
+  border: none;
+  background: none;
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.text-box-bar button:hover {
+  background: #f0f1f4;
+}
+
+.text-box-bar .tb-handle {
+  cursor: grab;
+}
+
+.text-box-bar .tb-handle:active {
+  cursor: grabbing;
+}
+
+.text-box-bar .tb-del:hover {
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 /* ---- Dropzone ---- */
