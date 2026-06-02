@@ -112,6 +112,34 @@
   font-size: 14px;
 }
 
+.info-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #eff6ff;
+  color: #1e40af;
+  border-bottom: 1px solid #bfdbfe;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.save-state {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---- Stage ---- */
 .stage {
   position: relative;

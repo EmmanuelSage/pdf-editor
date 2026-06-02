@@ -35,6 +35,13 @@ The page canvas is rendered with `AnnotationMode.ENABLE_FORMS`, so it paints eve
 *except* form widgets — those are drawn as interactive HTML by the annotation layer, so
 there's no double-rendering.
 
+**Autosave / crash recovery**: as you fill fields, the filled PDF is autosaved (debounced)
+to **IndexedDB** (`src/lib/sessionStore.js`) — IndexedDB rather than localStorage because the
+PDF is multi-MB binary. On reload the draft is re-opened with the values already in place, so
+a refresh or accidental close doesn't lose work. Persisting the *saved PDF bytes* (via
+`saveDocument()`) rather than a separate values blob means restore is just "re-open the file" —
+no field-value serialization to keep in sync. The draft is cleared when you Close the document.
+
 **Images to PDF** (create a new PDF) uses [pdf-lib](https://pdf-lib.js.org/). Each image
 becomes one page; you can rotate images 90° at a time and pick the page size (match the
 image, or fit onto A4/Letter with the page auto-oriented to the image). Notes:
@@ -70,8 +77,10 @@ home page is a launcher of tool cards.
 - `src/pages/EditPdf.jsx` — the editor: open, zoom, fill fields, export/download
 - `src/pages/ImagesToPdf.jsx` — upload images, reorder (drag), export a combined PDF
 - `src/lib/imagesToPdf.js` — builds the PDF from image files (pdf-lib)
-- `src/lib/pdfjs.js` — configures the PDF.js worker, re-exports the bits we use, loads the
-  form CSS, and owns the shared no-op `linkService`
+- `src/lib/pdfjs.js` — configures the PDF.js worker, loads the form CSS, owns the shared no-op
+  `linkService`, and exposes `loadPdfDocument(data)` (wraps the font/cMap options)
+- `src/lib/sessionStore.js` — IndexedDB autosave/restore for the Edit-document draft
+- `src/lib/download.js` — shared `downloadBytes(bytes, filename)` helper
 - `src/components/Dropzone.jsx` — upload / drag-and-drop
 - `src/components/PdfPageView.jsx` — renders one page: canvas + interactive annotation layer
 - `src/components/PdfDocumentView.jsx` — stacks all pages
